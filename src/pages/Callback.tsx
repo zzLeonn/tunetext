@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { SPOTIFY_CONFIG } from '../config/spotify';
 
-const Callback = () => {
+const Callback: React.FC = () => {
   const navigate = useNavigate();
   const setTokens = useAuthStore((state) => state.setTokens);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getAccessToken = async () => {
@@ -13,12 +14,13 @@ const Callback = () => {
       const code = params.get('code');
       const verifier = localStorage.getItem('code_verifier');
 
-      console.log('Auth Code:', code);
-      console.log('Verifier:', verifier);
+      if (!code) {
+        setError('No code found in URL parameters');
+        return;
+      }
 
-      if (!code || !verifier) {
-        console.error('Missing code or verifier');
-        navigate('/login');
+      if (!verifier) {
+        setError('No code verifier found in local storage');
         return;
       }
 
@@ -30,8 +32,6 @@ const Callback = () => {
         code_verifier: verifier,
       };
 
-      console.log('Token Request Body:', tokenRequestBody);
-
       try {
         const response = await fetch('https://accounts.spotify.com/api/token', {
           method: 'POST',
@@ -41,27 +41,39 @@ const Callback = () => {
           body: new URLSearchParams(tokenRequestBody),
         });
 
-        const data = await response.json();
-        console.log('Token Response:', data);
-        
-        if (response.ok) {
-          setTokens({
-            accessToken: data.access_token,
-            refreshToken: data.refresh_token,
-            expiresIn: data.expires_in,
-          });
-          navigate('/');
-        } else {
-          throw new Error(data.error_description || data.error);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error_description || errorData.error || 'Failed to fetch access token');
         }
+
+        const data = await response.json();
+        
+        setTokens({
+          accessToken: data.access_token,
+          refreshToken: data.refresh_token,
+          expiresIn: data.expires_in,
+        });
+
+        localStorage.removeItem('code_verifier');
+        navigate('/dashboard');
       } catch (error) {
         console.error('Authentication error:', error);
-        navigate('/login');
+        setError(error instanceof Error ? error.message : 'An unknown error occurred');
       }
     };
 
     getAccessToken();
   }, [navigate, setTokens]);
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
+        <div className="text-white bg-red-600 p-4 rounded">
+          Error: {error}. Please try logging in again.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#121212] flex items-center justify-center">
@@ -71,3 +83,4 @@ const Callback = () => {
 };
 
 export default Callback;
+

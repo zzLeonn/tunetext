@@ -2,12 +2,11 @@ import React from 'react';
 import { SPOTIFY_CONFIG } from '../../config/spotify';
 import { generateCodeVerifier, generateCodeChallenge } from '../../lib/spotify';
 
-const LoginButton = () => {
+const LoginButton: React.FC = () => {
   const handleLogin = async () => {
     const verifier = generateCodeVerifier(128);
     const challenge = await generateCodeChallenge(verifier);
-    
-    // Store verifier for later use
+
     localStorage.setItem('code_verifier', verifier);
     
     const params = new URLSearchParams({
