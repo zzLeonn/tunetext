@@ -1,54 +1,51 @@
 import React from 'react';
-import { Clock } from 'lucide-react';
-import PlaylistCard from './PlaylistCard';
+import { Search } from 'lucide-react';
+import UserMenu from '../Layout/UserMenu';
+import LyricsDisplay from './LyricsDisplay';
 
 const MainContent = () => {
-  const featuredPlaylists = [
-    {
-      id: 1,
-      title: "Today's Top Hits",
-      description: "The hottest tracks right now",
-      image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop"
-    },
-    {
-      id: 2,
-      title: "Discover Weekly",
-      description: "Your weekly mix of fresh music",
-      image: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=300&h=300&fit=crop"
-    }
+  // Mock data - replace with actual data from Spotify API
+  const mockLyrics = [
+    "When I was younger I saw",
+    "My daddy cry and curse at the wind",
+    "He broke his own heart and I watched",
+    "As he tried to reassemble it",
+    "And my momma swore",
+    "That she would never let herself forget",
+    "And that was the day that I promised",
+    "I'd never sing of love if it does not exist"
   ];
 
   return (
-    <div className="flex-1 bg-gradient-to-b from-[#1a1a1a] to-[#121212] overflow-y-auto p-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-4">Good afternoon</h1>
-        <div className="grid grid-cols-3 gap-4">
-          {featuredPlaylists.map(playlist => (
-            <PlaylistCard 
-              key={playlist.id}
-              title={playlist.title}
-              description={playlist.description}
-              image={playlist.image}
-            />
-          ))}
+    <div className="flex-1 bg-gradient-to-b from-[#1a1a1a] to-[#121212] overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 bg-[#121212]">
+        <div className="relative flex-1 max-w-xl">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            type="text"
+            placeholder="Search for songs, artists, or lyrics..."
+            className="w-full pl-10 pr-4 py-2 bg-[#282828] text-white rounded-full focus:outline-none focus:ring-2 focus:ring-spotify-green"
+          />
         </div>
-      </header>
+        <UserMenu />
+      </div>
 
-      <section>
-        <h2 className="text-xl font-bold text-white mb-4">Recently Played</h2>
-        <div className="bg-[#282828] rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-800">
-            <div className="grid grid-cols-12 text-gray-400 text-sm">
-              <div className="col-span-1">#</div>
-              <div className="col-span-5">TITLE</div>
-              <div className="col-span-4">ALBUM</div>
-              <div className="col-span-2 flex justify-end">
-                <Clock className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Lyrics Display */}
+      <div className="flex-1 overflow-hidden">
+        <LyricsDisplay
+          lyrics={mockLyrics}
+          currentLine={2}
+          isPlaying={true}
+          currentTime={45}
+          duration={180}
+          songInfo={{
+            title: "The Only Exception",
+            artist: "Paramore",
+            albumArt: "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=300&h=300&fit=crop"
+          }}
+        />
+      </div>
     </div>
   );
 };

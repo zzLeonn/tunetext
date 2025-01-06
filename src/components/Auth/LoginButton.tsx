@@ -1,5 +1,5 @@
 import React from 'react';
-import { SPOTIFY_CONFIG } from '../../config/spotify';
+import { SPOTIFY_CONFIG } from '../../config/spotifycfg';
 import { generateCodeVerifier, generateCodeChallenge } from '../../lib/spotify';
 
 const LoginButton: React.FC = () => {

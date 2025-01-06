@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { SPOTIFY_CONFIG } from '../config/spotify';
+import { SPOTIFY_CONFIG } from '../config/spotifycfg';
 
 const Callback: React.FC = () => {
   const navigate = useNavigate();
